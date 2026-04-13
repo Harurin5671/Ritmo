@@ -1,0 +1,97 @@
+# Gradle files
+.gradle/
+build/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Log/OS Files
+*.log
+
+# Android Studio generated files and folders
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+output.json
+
+# IntelliJ
+*.iml
+.idea/
+misc.xml
+deploymentTargetDropDown.xml
+render.experimental.xml
+
+# Keystore files
+*.jks
+*.keystore
+
+# Google Services (e.g. APIs or Firebase)
+google-services.json
+
+# Android Profiling
+*.hprof
+
+# ============================================
+# Android / Gradle
+# ============================================
+*.iml
+.gradle/
+build/
+local.properties
+captures/
+
+# ============================================
+# Android Studio / IntelliJ IDEA
+# ============================================
+.idea/
+*.swp
+*~
+
+# ============================================
+# Signing / Keystore
+# ============================================
+*.jks
+*.keystore
+keystore.properties
+
+# ============================================
+# Sistema operativo
+# ============================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ============================================
+# Logs y crashes
+# ============================================
+*.log
+crash-reports/
+
+# ============================================
+# Archivos generados
+# ============================================
+/out/
+gen/
+bin/
+
+# ============================================
+# Google Services (si tiene API keys sensibles)
+# ============================================
+# google-services.json
+
+# ============================================
+# Variables de entorno / Secrets
+# ============================================
+*.env
+secrets.properties
