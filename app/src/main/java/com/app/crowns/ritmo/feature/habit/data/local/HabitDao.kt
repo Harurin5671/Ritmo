@@ -30,8 +30,14 @@ interface HabitDao {
     @Query("UPDATE habits SET status = :status where id = :id")
     suspend fun updateStatus(id: Long, status: String)
 
+    @Query("UPDATE habits SET status = 'MISSED' WHERE id = :id")
+    suspend fun markAsMissed(id: Long)
+
     @Query("UPDATE habits SET isSnoozed = :isSnoozed, snoozeUntilMillis = :until WHERE id = :id")
     suspend fun updateSnooze(id: Long, isSnoozed: Boolean, until: Long?)
+
+    @Query("UPDATE habits SET currentAmount = :amount WHERE id = :id")
+    suspend fun updateCurrentAmount(id: Long, amount: Float)
 
     @Query("UPDATE habits SET status = 'PENDING', isSnoozed = 0, snoozeUntilMillis = NULL, currentAmount = 0")
     suspend fun resetDailyStatus()

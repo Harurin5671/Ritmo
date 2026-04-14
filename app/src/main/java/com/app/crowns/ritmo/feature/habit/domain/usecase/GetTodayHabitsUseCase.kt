@@ -5,7 +5,7 @@ import com.app.crowns.ritmo.feature.habit.domain.model.Habit
 import com.app.crowns.ritmo.feature.habit.domain.repository.HabitRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.util.Calendar
+import Calendar
 import javax.inject.Inject
 
 class GetTodayHabitsUseCase @Inject constructor(

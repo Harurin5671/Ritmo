@@ -10,6 +10,8 @@ interface HabitRepository {
     suspend fun updateHabit(habit: Habit)
     suspend fun deleteHabit(habit: Habit)
     suspend fun completeHabit(id: Long)
+    suspend fun updateStatus(id: Long, status: String)
+    suspend fun updateCurrentAmount(id: Long, amount: Float)
     suspend fun snoozeHabit(id: Long, untilMillis: Long)
     suspend fun resetDailyStatus()
 }

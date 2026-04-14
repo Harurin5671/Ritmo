@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.crowns.ritmo.core.datastore.UserPreferencesDataStore
 import com.app.crowns.ritmo.core.logging.AppLogger
+import com.app.crowns.ritmo.core.notification.AlarmScheduler
 import com.app.crowns.ritmo.feature.habit.domain.model.DayMoment
 import com.app.crowns.ritmo.feature.habit.domain.model.Habit
 import com.app.crowns.ritmo.feature.habit.domain.model.HabitStatus
@@ -25,6 +26,7 @@ class DashboardViewModel @Inject constructor(
     private val getTodayHabitsUseCase: GetTodayHabitsUseCase,
     private val completeHabitUseCase: CompleteHabitUseCase,
     private val snoozeHabitUseCase: SnoozeHabitUseCase,
+    private val alarmScheduler: AlarmScheduler,
     private val dataStore: UserPreferencesDataStore,
     private val logger: AppLogger
 ) : ViewModel() {
@@ -120,5 +122,14 @@ class DashboardViewModel @Inject constructor(
         logger.d("DashboardViewModel → retrying load")
         _uiState.update { it.copy(contentState = DashboardContentState.Loading) }
         loadDashboard()
+    }
+
+    fun onTestNotification() {
+        logger.i("DashboardViewModel → scheduling test notification in 1 minute")
+        alarmScheduler.scheduleHabitReminder(
+            habitId = 999,
+            habitName = "Test Habit (1 min)",
+            triggerTimeMillis = System.currentTimeMillis() + 60 * 1000L
+        )
     }
 }

@@ -19,17 +19,19 @@ data class HabitEntity(
     val intervalMinutes: Int?,
     val dailyGoalAmount: Float?,
     val dailyGoalUnit: String?,
+    val amountPerInterval: Float?,
     val currentAmount: Float?,
 
     val isSnoozed: Boolean,
     val snoozeUntilMillis: Long?,
 
     val estimatedMinutes: Int,
-    val activeDays: String,         // "1,2,3,4,5,6,7" guardado como string
+    val activeDays: String,
     val isHardDayIncluded: Boolean,
-    val linkedHabitIds: String,     // "1,2,3" guardado como string
+    val linkedHabitIds: String,
 
     val currentStreak: Int,
     val longestStreak: Int,
-    val createdAt: Long
+    val createdAt: Long,
+    val nextOccurrenceMillis: Long? = null
 )

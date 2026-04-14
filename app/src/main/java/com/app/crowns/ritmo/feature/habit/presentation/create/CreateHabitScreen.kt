@@ -147,10 +147,14 @@ fun CreateHabitScreen(
                     FixedTimeSection(
                         selectedMoment = state.selectedDayMoment,
                         onMomentSelected = viewModel::onDayMomentSelected,
+                        scheduledHour = state.scheduledHour ?: 8,
+                        scheduledMinute = state.scheduledMinute ?: 0,
+                        onTimeChanged = viewModel::onScheduledTimeChanged,
                         snoozeEnabled = state.snoozeEnabled,
                         onSnoozeToggle = viewModel::onSnoozeToggled
                     )
                 }
+
                 HabitType.FREE -> {
                     // Free only shows day moment
                     DayMomentOnlySection(
@@ -158,13 +162,17 @@ fun CreateHabitScreen(
                         onMomentSelected = viewModel::onDayMomentSelected
                     )
                 }
+
                 HabitType.INTERVAL -> {
                     IntervalSection(
+                        category = state.selectedCategory,
                         intervalMinutes = state.intervalMinutes ?: 60,
                         dailyGoalAmount = state.dailyGoalAmount ?: 3f,
+                        amountPerInterval = state.amountPerInterval ?: 0.5f,
                         dailyGoalUnit = state.dailyGoalUnit,
                         onIntervalChanged = viewModel::onIntervalMinutesChanged,
-                        onGoalChanged = viewModel::onDailyGoalChanged
+                        onGoalChanged = viewModel::onDailyGoalChanged,
+                        onAmountPerIntervalChanged = viewModel::onAmountPerIntervalChanged
                     )
                 }
             }

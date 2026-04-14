@@ -19,6 +19,7 @@ fun HabitEntity.toDomain(): Habit = Habit(
     intervalMinutes = intervalMinutes,
     dailyGoalAmount = dailyGoalAmount,
     dailyGoalUnit = dailyGoalUnit,
+    amountPerInterval = amountPerInterval,
     currentAmount = currentAmount,
     isSnoozed = isSnoozed,
     snoozeUntilMillis = snoozeUntilMillis,
@@ -33,7 +34,8 @@ fun HabitEntity.toDomain(): Habit = Habit(
         .mapNotNull { it.trim().toLongOrNull() },
     currentStreak = currentStreak,
     longestStreak = longestStreak,
-    createdAt = createdAt
+    createdAt = createdAt,
+    nextOccurrenceMillis = nextOccurrenceMillis
 )
 
 fun Habit.toEntity(): HabitEntity = HabitEntity(
@@ -48,6 +50,7 @@ fun Habit.toEntity(): HabitEntity = HabitEntity(
     intervalMinutes = intervalMinutes,
     dailyGoalAmount = dailyGoalAmount,
     dailyGoalUnit = dailyGoalUnit,
+    amountPerInterval = amountPerInterval,
     currentAmount = currentAmount,
     isSnoozed = isSnoozed,
     snoozeUntilMillis = snoozeUntilMillis,
@@ -57,5 +60,6 @@ fun Habit.toEntity(): HabitEntity = HabitEntity(
     linkedHabitIds = linkedHabitIds.joinToString(","),
     currentStreak = currentStreak,
     longestStreak = longestStreak,
-    createdAt = createdAt
+    createdAt = createdAt,
+    nextOccurrenceMillis = nextOccurrenceMillis
 )

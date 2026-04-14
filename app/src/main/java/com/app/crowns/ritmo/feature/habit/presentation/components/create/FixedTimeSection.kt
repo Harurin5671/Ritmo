@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -37,15 +38,31 @@ import com.app.crowns.ritmo.ui.theme.Primary
 import com.app.crowns.ritmo.ui.theme.Surface
 import com.app.crowns.ritmo.ui.theme.SurfaceContainerHigh
 import com.app.crowns.ritmo.ui.theme.TextPrimary
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 @Composable
 fun FixedTimeSection(
     selectedMoment: DayMoment,
     onMomentSelected: (DayMoment) -> Unit,
+    scheduledHour: Int,
+    scheduledMinute: Int,
+    onTimeChanged: (Int, Int) -> Unit,
     snoozeEnabled: Boolean,
     onSnoozeToggle: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+
+    val timePickerDialog = android.app.TimePickerDialog(
+        context,
+        { _, hour, minute -> onTimeChanged(hour, minute) },
+        scheduledHour,
+        scheduledMinute,
+        false // is24HourView
+    )
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -73,11 +90,26 @@ fun FixedTimeSection(
                 Column {
                     Text(
                         text = "Pick time",
-                        style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium, color = OnSurfaceMedium)
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = OnSurfaceMedium
+                        )
                     )
+                    val timeText = Calendar.getInstance().apply {
+                        set(Calendar.HOUR_OF_DAY, scheduledHour)
+                        set(Calendar.MINUTE, scheduledMinute)
+                    }.let {
+                        val format = SimpleDateFormat("hh:mm a", Locale.getDefault())
+                        format.format(it.time)
+                    }
                     Text(
-                        text = "08:30 AM",
-                        style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                        text = timeText,
+                        style = TextStyle(
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = TextPrimary
+                        )
                     )
                 }
             }
@@ -86,7 +118,7 @@ fun FixedTimeSection(
                     .size(40.dp)
                     .clip(CircleShape)
                     .background(SurfaceContainerHigh)
-                    .clickable { /* open time picker */ },
+                    .clickable { timePickerDialog.show() },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -154,7 +186,11 @@ fun FixedTimeSection(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = "Snooze capability",
-                    style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = TextPrimary)
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = TextPrimary
+                    )
                 )
                 Text(
                     text = "Allow 5-min reminders if missed",

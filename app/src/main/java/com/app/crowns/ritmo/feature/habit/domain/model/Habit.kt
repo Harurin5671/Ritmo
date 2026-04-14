@@ -16,6 +16,7 @@ data class Habit(
     val intervalMinutes: Int? = null,     // cada 60 minutos
     val dailyGoalAmount: Float? = null,   // 3.0 litros
     val dailyGoalUnit: String? = null,    // "L", "ml"
+    val amountPerInterval: Float? = null, // 0.5 litros cada vez
     val currentAmount: Float? = null,     // cuánto lleva hoy
 
     // Snooze
@@ -32,5 +33,6 @@ data class Habit(
     // Streak
     val currentStreak: Int = 0,
     val longestStreak: Int = 0,
-    val createdAt: Long = System.currentTimeMillis()
+    val createdAt: Long = System.currentTimeMillis(),
+    val nextOccurrenceMillis: Long? = null
 )

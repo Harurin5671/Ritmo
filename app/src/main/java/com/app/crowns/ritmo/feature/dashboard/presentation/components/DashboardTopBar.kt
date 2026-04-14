@@ -22,7 +22,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun DashboardTopBar(
     modifier: Modifier = Modifier,
-    userName: String
+    userName: String,
+    onTestClick: () -> Unit = {}
 ) {
     TopAppBar(
         title = {
@@ -41,7 +42,7 @@ fun DashboardTopBar(
             }
         },
         actions = {
-            IconButton(onClick = {}) {
+            IconButton(onClick = onTestClick) {
                 Icon(
                     imageVector = Icons.Outlined.Notifications,
                     contentDescription = "Notification",

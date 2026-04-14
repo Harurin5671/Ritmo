@@ -32,7 +32,12 @@ fun DashboardScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
-        topBar = { DashboardTopBar(userName = uiState.userName) },
+        topBar = { 
+            DashboardTopBar(
+                userName = uiState.userName,
+                onTestClick = viewModel::onTestNotification
+            ) 
+        },
         bottomBar = {
             DashboardBottomBar(
                 activeTab = uiState.activeTab,

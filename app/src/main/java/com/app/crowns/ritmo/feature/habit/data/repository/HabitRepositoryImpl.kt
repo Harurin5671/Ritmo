@@ -48,6 +48,16 @@ class HabitRepositoryImpl @Inject constructor(
         dao.updateStatus(id, HabitStatus.COMPLETED.name)
     }
 
+    override suspend fun updateStatus(id: Long, status: String) {
+        logger.i("HabitRepository → updateStatus id=$id status=$status")
+        dao.updateStatus(id, status)
+    }
+
+    override suspend fun updateCurrentAmount(id: Long, amount: Float) {
+        logger.i("HabitRepository → updateCurrentAmount id=$id amount=$amount")
+        dao.updateCurrentAmount(id, amount)
+    }
+
     override suspend fun snoozeHabit(id: Long, untilMillis: Long) {
         logger.i("HabitRepository → snoozeHabit id=$id until=$untilMillis")
         dao.updateSnooze(id, isSnoozed = true, until = untilMillis)

@@ -37,6 +37,10 @@
             android:exported="false" />
 
         <receiver
+            android:name=".core.notification.receiver.HabitMissedReceiver"
+            android:exported="false" />
+
+        <receiver
             android:name=".core.notification.receiver.BootReceiver"
             android:exported="true">
             <intent-filter>

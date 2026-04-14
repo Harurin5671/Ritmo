@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import javax.inject.Inject
 
 sealed interface CreateHabitEvent {
@@ -66,6 +67,10 @@ class CreateHabitViewModel @Inject constructor(
         _uiState.update { it.copy(dailyGoalAmount = amount, dailyGoalUnit = unit) }
     }
 
+    fun onAmountPerIntervalChanged(amount: Float) {
+        _uiState.update { it.copy(amountPerInterval = amount) }
+    }
+
     fun onEstimatedMinutesChanged(minutes: Int) {
         _uiState.update { it.copy(estimatedMinutes = minutes) }
     }
@@ -86,26 +91,47 @@ class CreateHabitViewModel @Inject constructor(
 
     fun onSave() {
         val state = _uiState.value
+        logger.d("CreateHabitViewModel → saving habit: name=${state.name}, type=${state.selectedType}, hour=${state.scheduledHour}, minute=${state.scheduledMinute}, interval=${state.intervalMinutes}")
         if (!validate(state)) return
 
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true, saveError = null) }
             try {
-                val habit = buildHabit(state)
+                var habit = buildHabit(state)
+
+                // Calculate next occurrence before saving
+                val now = System.currentTimeMillis()
+                val triggerTime = when (habit.type) {
+                    HabitType.FIXED -> {
+                        // For FIXED, find the next available time today or tomorrow (11, 16, 20)
+                        calculateNextFixedTime(now)
+                    }
+
+                    HabitType.FREE -> {
+                        if (habit.scheduledHour != null && habit.scheduledMinute != null) {
+                            buildTriggerTime(habit.scheduledHour, habit.scheduledMinute)
+                        } else null
+                    }
+
+                    HabitType.INTERVAL -> {
+                        // Start with the interval from now
+                        now + ((habit.intervalMinutes ?: 60) * 60 * 1000L)
+                    }
+                }
+
+                habit = habit.copy(nextOccurrenceMillis = triggerTime)
                 val habitId = createHabitUseCase(habit)
-                if (habit.scheduledHour != null && habit.scheduledMinute != null) {
+
+                triggerTime?.let {
                     alarmScheduler.scheduleHabitReminder(
                         habitId = habitId,
                         habitName = habit.name,
-                        hour = habit.scheduledHour,
-                        minute = habit.scheduledMinute
+                        triggerTimeMillis = it
                     )
-                    logger.i("CreateHabitViewModel → alarm scheduled for '${habit.name}' at ${habit.scheduledHour}:${habit.scheduledMinute}")
-                } else {
-                    logger.d("CreateHabitViewModel → no alarm scheduled, habit has no fixed time")
+                    logger.i("CreateHabitViewModel → alarm scheduled for '${habit.name}' at $it")
                 }
 
-                logger.i("CreateHabitViewModel → habit created: ${state.name}")
+                logger.i("CreateHabitViewModel → habit created successfully: ${state.name}")
                 _uiState.update { it.copy(isSaving = false) }
                 _events.emit(CreateHabitEvent.HabitSaved)
             } catch (e: Exception) {
@@ -115,6 +141,43 @@ class CreateHabitViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun calculateNextFixedTime(nowMillis: Long): Long {
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = nowMillis
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+
+        val targetHour = when {
+            currentHour < 11 -> 11
+            currentHour < 16 -> 16
+            currentHour < 20 -> 20
+            else -> {
+                calendar.add(Calendar.DAY_OF_YEAR, 1)
+                11
+            }
+        }
+
+        calendar.set(Calendar.HOUR_OF_DAY, targetHour)
+        calendar.set(Calendar.MINUTE, 0)
+
+        return calendar.timeInMillis
+    }
+
+    private fun buildTriggerTime(hour: Int, minute: Int): Long {
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, hour)
+            set(Calendar.MINUTE, minute)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+            if (timeInMillis <= System.currentTimeMillis()) {
+                add(Calendar.DAY_OF_YEAR, 1)
+            }
+        }
+        return calendar.timeInMillis
     }
 
     private fun validate(state: CreateHabitUiState): Boolean {
@@ -141,6 +204,7 @@ class CreateHabitViewModel @Inject constructor(
         intervalMinutes = state.intervalMinutes,
         dailyGoalAmount = state.dailyGoalAmount,
         dailyGoalUnit = state.dailyGoalUnit,
+        amountPerInterval = state.amountPerInterval,
         currentAmount = 0f,
         estimatedMinutes = state.estimatedMinutes,
         activeDays = state.activeDays,
