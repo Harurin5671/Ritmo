@@ -3,8 +3,6 @@ package com.app.crowns.ritmo.core.notification.receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.app.crowns.ritmo.core.logging.AppLogger
 import com.app.crowns.ritmo.core.notification.AlarmScheduler
 import com.app.crowns.ritmo.core.notification.NotificationActions
@@ -38,7 +36,6 @@ class HabitActionReceiver : BroadcastReceiver() {
     @Inject
     lateinit var logger: AppLogger
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action
         val habitId = intent.getLongExtra(NotificationExtras.HABIT_ID, -1L)
@@ -134,7 +131,6 @@ class HabitActionReceiver : BroadcastReceiver() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun calculateNextOccurrence(
         habit: Habit,
         isCompletedForToday: Boolean
